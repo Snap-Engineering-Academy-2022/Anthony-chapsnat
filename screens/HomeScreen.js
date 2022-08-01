@@ -10,7 +10,7 @@ export default function HomeScreen({ navigation }) {
 	const auth = getAuth();
 	const user = auth.currentUser;
 
-	console.log(user, "<--- user in the home screen")
+	// console.log(user, "<--- user in the home screen")
 
 	if (user !== null) {
 		return (

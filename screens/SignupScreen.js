@@ -1,6 +1,8 @@
-import { Text, View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";	
-import {useState} from "react"
+import { useState } from "react";
+import { doc, setDoc } from "firebase/firestore";
+import db from "../firebase";
 
 export default function LoginScreen({navigation}) {
 	const [email, setEmail] = useState();
@@ -15,6 +17,8 @@ export default function LoginScreen({navigation}) {
 		.then((userCredential) => {
 			const user = userCredential.user;
 			auth.currentUser = user;
+
+			console.log(auth.currentUser.providerData[0], '<--- user auth object');
 		})
 		.catch((error) => {
 			const errorCode = error.code;
@@ -22,6 +26,16 @@ export default function LoginScreen({navigation}) {
 			console.log(errorCode)
 			console.log(errorMessage)
 		});
+
+		if (auth.currentUser) {
+			await setDoc(doc(db, "User", auth.currentUser.uid), {
+				username: auth.currentUser.providerData[0].email,
+				bio: "",
+				avatar: auth.currentUser.providerData[0].photoURL ? auth.currentUser.providerData[0].photoURL : "https://placeimg.com/140/140/any"
+
+			});
+		}
+
 	}
 
 	return (
